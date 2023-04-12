@@ -7,6 +7,11 @@
 		"dist",
 		"src"
 	],
+	"repository": {
+		"url": "https://github.com/RonalSCC/-ayf-comunes",
+		"type": "git"
+	},
+	"homepage": "",
 	"engines": {
 		"node": ">=10"
 	},
@@ -14,6 +19,7 @@
 		"start": "tsdx watch",
 		"build": "tsdx build",
 		"test": "tsdx test --passWithNoTests",
+		"test:watch": "tsdx test --watch",
 		"lint": "tsdx lint",
 		"prepare": "tsdx build",
 		"size": "size-limit",
@@ -49,7 +55,7 @@
 	"devDependencies": {
 		"@rollup/plugin-image": "^3.0.2",
 		"@size-limit/preset-small-lib": "^8.2.4",
-		"@types/react": "^18.0.34",
+		"@types/react": "^18.0.35",
 		"@types/react-dom": "^18.0.11",
 		"husky": "^8.0.3",
 		"react": "^18.2.0",
@@ -58,12 +64,29 @@
 		"size-limit": "^8.2.4",
 		"tsdx": "^0.14.1",
 		"tslib": "^2.5.0",
-		"typescript": "^3.9.10"
+		"typescript": "^3.9.10",
+		"@types/react-test-renderer": "^18.0.0"
 	},
 	"dependencies": {
+		"@babel/preset-env": "^7.21.4",
+		"@babel/preset-react": "^7.18.6",
 		"@emotion/react": "^11.10.6",
 		"@emotion/styled": "^11.10.6",
 		"@mui/icons-material": "^5.11.16",
-		"@mui/material": "^5.12.0"
+		"@mui/material": "^5.12.0",
+		"babel-jest": "^29.5.0",
+		"jest": "^25.5.4",
+		"react-test-renderer": "^18.2.0"
+	},
+	"keywords": [
+		"ayf",
+		"sinco",
+		"comunes"
+	],
+	"jest":{
+		"moduleNameMapper": {
+			"\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "identity-obj-proxy",
+			"\\.(css|less|scss|sass)$": "identity-obj-proxy"
+		}
 	}
 }
