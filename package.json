@@ -1,92 +1,88 @@
 {
-	"version": "0.0.1",
+	"name": "@ronalscc/ayfgenericos",
+	"version": "0.0.33",
 	"license": "MIT",
-	"main": "dist/index.js",
-	"typings": "dist/index.d.ts",
+	"private": false,
+	"homepage": ".",
+	"description": "Libreria de componentes en React",
+	"main": "./dist/index.js",
+	"types": "./dist/src/index.d.ts",
 	"files": [
-		"dist",
-		"src"
+	  "./dist"
 	],
-	"repository": {
-		"url": "https://github.com/RonalSCC/-ayf-comunes",
-		"type": "git"
-	},
-	"homepage": "",
-	"engines": {
-		"node": ">=10"
+	"dependencies": {
+	  "@emotion/react": "^11.10.4",
+	  "@emotion/styled": "^11.10.4",
+	  "@fontsource/roboto": "^4.5.8",
+	  "@mui/icons-material": "^5.10.9",
+	  "@mui/material": "^5.10.10",
+	  "@testing-library/jest-dom": "^5.16.5",
+	  "@testing-library/react": "^13.4.0",
+	  "@testing-library/user-event": "^13.5.0",
+	  "@types/jest": "^27.5.2",
+	  "@types/node": "^16.11.68",
+	  "@types/react": "^18.0.21",
+	  "@types/react-dom": "^18.0.6",
+	  "axios": "^1.2.1",
+	  "react": "^18.2.0",
+	  "react-dom": "^18.2.0",
+	  "react-scripts": "5.0.1",
+	  "react-test-renderer": "^18.2.0",
+	  "ts-jest": "^29.0.3",
+	  "typescript": "^4.8.4",
+	  "web-vitals": "^2.1.4"
 	},
 	"scripts": {
-		"start": "tsdx watch",
-		"build": "tsdx build",
-		"test": "tsdx test --passWithNoTests",
-		"test:watch": "tsdx test --watch",
-		"lint": "tsdx lint",
-		"prepare": "tsdx build",
-		"size": "size-limit",
-		"analyze": "size-limit --why"
+	  "clean": "rimraf ./buld/*",
+	  "start": "react-scripts start",
+	  "build": "npm run clean && react-scripts build",
+	  "test": "react-scripts test",
+	  "eject": "react-scripts eject",
+	  "lib:dev": "webpack --mode development",
+	  "lib:prod": "webpack --mode=production"
 	},
-	"peerDependencies": {
-		"react": ">=18"
+	"eslintConfig": {
+	  "extends": [
+		"react-app",
+		"react-app/jest"
+	  ],
+	  "ignorePatterns": [
+		"dist/*"
+	  ]
 	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "tsdx lint"
-		}
+	"browserslist": {
+	  "production": [
+		">0.2%",
+		"not dead",
+		"not op_mini all"
+	  ],
+	  "development": [
+		"last 1 chrome version",
+		"last 1 firefox version",
+		"last 1 safari version"
+	  ]
 	},
-	"prettier": {
-		"printWidth": 80,
-		"semi": true,
-		"singleQuote": true,
-		"trailingComma": "es5"
-	},
-	"name": "@ayf/comunes",
-	"author": "Ronal Santiago Castaño Chaparro",
-	"module": "dist/ayf-generales-sincosoft.esm.js",
-	"size-limit": [
-		{
-			"path": "dist/ayf-generales-sincosoft.cjs.production.min.js",
-			"limit": "10 KB"
-		},
-		{
-			"path": "dist/ayf-generales-sincosoft.esm.js",
-			"limit": "10 KB"
-		}
-	],
 	"devDependencies": {
-		"@rollup/plugin-image": "^3.0.2",
-		"@size-limit/preset-small-lib": "^8.2.4",
-		"@types/react": "^18.0.35",
-		"@types/react-dom": "^18.0.11",
-		"husky": "^8.0.3",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"rollup-plugin-postcss": "^4.0.2",
-		"size-limit": "^8.2.4",
-		"tsdx": "^0.14.1",
-		"tslib": "^2.5.0",
-		"typescript": "^3.9.10",
-		"@types/react-test-renderer": "^18.0.0"
+	  "@types/react-test-renderer": "^18.0.0",
+	  "@types/webpack": "^5.28.0",
+	  "css-loader": "^6.7.3",
+	  "ts-loader": "^9.4.2",
+	  "ts-node": "^10.9.1",
+	  "webpack": "^5.76.3",
+	  "webpack-cli": "^5.0.1"
 	},
-	"dependencies": {
-		"@babel/preset-env": "^7.21.4",
-		"@babel/preset-react": "^7.18.6",
-		"@emotion/react": "^11.10.6",
-		"@emotion/styled": "^11.10.6",
-		"@mui/icons-material": "^5.11.16",
-		"@mui/material": "^5.12.0",
-		"babel-jest": "^29.5.0",
-		"jest": "^25.5.4",
-		"react-test-renderer": "^18.2.0"
+  
+	"directories": {
+	  "doc": "docs"
+	},
+	"repository": {
+	  "type": "git",
+	  "url": ""
 	},
 	"keywords": [
-		"ayf",
-		"sinco",
-		"comunes"
+	  "React",
+	  "components",
+	  "autocomplete"
 	],
-	"jest":{
-		"moduleNameMapper": {
-			"\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "identity-obj-proxy",
-			"\\.(css|less|scss|sass)$": "identity-obj-proxy"
-		}
-	}
-}
+	"author": "Ronal Castaño"
+  }

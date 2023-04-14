@@ -20,4 +20,6 @@ let configAxios: CreateAxiosDefaults = {
 
 const api = axios.create(configAxios);
 
+
+
 export default api;

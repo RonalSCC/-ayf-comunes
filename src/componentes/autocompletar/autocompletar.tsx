@@ -1,38 +1,40 @@
 import React from 'react'
+import { Clear, Search } from '@mui/icons-material';
 import { Fade, IconButton, ListItem } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField'
-import { Clear, Search } from '@mui/icons-material';
-import useDebounce from './hooks/debounce.hook';
-import DataSource from './interfaces/base/datasource';
-import { defaultFunction, isEmptyObject, isNotEmptyObject, normalizeString } from './utils/fn';
-import { others as keyCodes,  } from './utils/keyboard';
-import { useEvent } from './hooks/event.hook';
-import api from './utils/api';
+import useDebounce from './hooks/useDebounce';
+import useEvent from './hooks/useEvent';
+import { DataSource, ServiceProps } from './interfaces/base';
+import { defaultFunction, isEmptyObject, isFunction, isNotEmptyObject, normalizeString } from './utils/fn';
+import { others as keyCodes } from './utils/keyboard';
+import SendRequest from '../request';
 
-
-
-export interface ServiceProps {
-  dataText?: string;
-  dataValue?: string;
-  params?: {[key: string]: number | string};
-  url: string;
-  searchParam?: string;
-  toDataSource?: (data: any[], returnObject?: boolean) => DataSource[];
-  executeOnce?: boolean;
+interface stateProps {
+  dataSource: DataSource[],
+  open: boolean;
+  value: string;
+  cursor: number;
 }
 
-export interface InputTextProps {
+interface IconsEndAdornmentProps {
+  showSearch: boolean;
+  showClear: boolean;
+  onClickClear: () => void;
+  children?: React.ReactNode;
+}
+
+interface InputTextProps {
   fullWidth?: boolean;
   name?: string;
   placeholder?: string;
 }
 
 export interface AutocompletarProps {
-  clearable?: boolean,
+  clearable?: boolean;
   data?: Array<DataSource | any>;
   delay?: number;
   hideSearch?: boolean;
@@ -44,13 +46,6 @@ export interface AutocompletarProps {
   required?: boolean;
   returnObject?: boolean;
   service?: ServiceProps;
-}
-
-interface stateProps {
-  dataSource: DataSource[],
-  open: boolean;
-  value: string;
-  cursor: number;
 }
 
 const SearchIcon = React.memo(() => {
@@ -69,6 +64,16 @@ const ClearIcon = React.memo(({ onClick } : { onClick: () => void }) => {
       </IconButton>
     </InputAdornment>
   );
+});
+
+const IconsEndAdornment = React.memo((props: IconsEndAdornmentProps) => {
+  return (
+    <React.Fragment>
+      { props.showClear && <ClearIcon  onClick={ props.onClickClear } /> }
+      { props.showSearch && <SearchIcon /> }
+      { props.children }
+    </React.Fragment>
+  )
 })
 
 const renderTextDefault = (obj: DataSource) => obj?.text;
@@ -89,8 +94,7 @@ const toMap = (data: any[]) => {
   return data || [];
 }
 
-const Autocompletar = (inProps: AutocompletarProps) => {
-
+export const Autocompletar = (inProps: AutocompletarProps) => {
   const {
     clearable = false,
     data = [],
@@ -131,7 +135,7 @@ const Autocompletar = (inProps: AutocompletarProps) => {
 
   const onExecuteOnce = useEvent(async () => {
     if (executeOnce) {
-      const { data:datos } = await api.get(urlService, { params });
+      const {datos} = await SendRequest.get({urlServicio:urlService, body: params });
       let dataSource: DataSource[] = toDataSource ? toDataSource(datos, returnObject) : mapDataSource(datos);
       setState(s => ({ ...s, dataSource }));
       setinitialData(dataSource);
@@ -162,6 +166,10 @@ const Autocompletar = (inProps: AutocompletarProps) => {
   }
 
   const resolveParams = (search: string) => {
+    if (isFunction(params)){
+      return (params as CallableFunction)(search);
+    }
+
     return {
       [searchParam]: search,
       ...params
@@ -172,7 +180,7 @@ const Autocompletar = (inProps: AutocompletarProps) => {
     if (pattern.trim().length){
       if (urlService) {
         const params = resolveParams(pattern);
-        const { data:datos } = await api.get(urlService, { params });
+        const { datos:datos } = await SendRequest.get({urlServicio:urlService, body: params });
 
         let dataSource: DataSource[] =  toDataSource ? toDataSource(datos, returnObject) : mapDataSource(datos);
         setState({ value: pattern, dataSource, open: Boolean(dataSource.length), cursor: -1 });
@@ -203,7 +211,7 @@ const Autocompletar = (inProps: AutocompletarProps) => {
 
         const filterData = mapDataSource(dataSource).filter((el: DataSource) => {
           return filter(pattern, el) || found;
-        })
+        });
 
         setState({ value: pattern, dataSource: filterData, open: Boolean(filterData.length), cursor: -1 });
       }
@@ -220,19 +228,16 @@ const Autocompletar = (inProps: AutocompletarProps) => {
   }
 
   const handleSelected = (obj: DataSource) => {
-    setTimeout(() => {
-      if (obj) {
-        onSelected(obj);
-        setState({ ...state, value: renderText(obj), open: false });
-      }
-    }, 100);
+    if (obj) {
+      onSelected(obj);
+      setState({ ...state, value: renderText(obj), open: false });
+    }
   }
 
-  const handleInputBlur = (e: any) => {
-    setTimeout(() => {
-      if (state.open)
-        setState({ ...state, open: false });
-    }, 100);
+  const handleInputBlur = (_e: any) => {
+    if (state.open) {
+      setState({ ...state, open: false });
+    }
   }
 
   const isKeyInvalid = (keyCode: number) => {
@@ -256,7 +261,7 @@ const Autocompletar = (inProps: AutocompletarProps) => {
     if (keyCodes.ESC === e.keyCode) {
       setState({...state, open: false})
     } else if (e.keyCode === keyCodes.ENTER) {
-      const obj = dataSource.find((o, i) => i === cursor)  as DataSource;
+      const obj = dataSource.find((_o, i) => i === cursor)  as DataSource;
       handleSelected(obj);
     } else if (keyCodes.UP === e.keyCode && cursor > 0) {
       newCursor = cursor - 1 ;
@@ -305,7 +310,7 @@ const Autocompletar = (inProps: AutocompletarProps) => {
     }
   }
 
-  const handleInputFocus = (e: any) => {
+  const handleInputFocus = (_e: any) => {
     if (executeOnce) {
       setState({ ...state, open: Boolean(state.dataSource.length) })
     }
@@ -335,14 +340,15 @@ const Autocompletar = (inProps: AutocompletarProps) => {
   }
 
   return (
-    <div id={ id }>
+    <div id={ id } style={{ display: 'inline-block' }}>
       <TextField
+        { ...props }
         { ...props.inputProps }
         autoComplete='off'
         error={ IsInputInValid() }
         inputRef={ inputRef }
         InputProps={{
-          endAdornment: <>{ clearable && <ClearIcon onClick={ clear } /> }{ !hideSearch && <SearchIcon /> }</>,
+          endAdornment: <IconsEndAdornment showClear={ clearable } showSearch={ !hideSearch } onClickClear={ clear } />,
         }}
         onChange={ handleInputChange }
         onFocus={ handleInputFocus }
@@ -364,7 +370,7 @@ const Autocompletar = (inProps: AutocompletarProps) => {
                     <ListItem
                       dense
                       key={ option.value }
-                      onClick={ () => { handleSelected(option) } }
+                      onMouseDown={ () => { handleSelected(option) } }
                     >
                       <ListItemButton selected={ state.cursor === index } tabIndex={ 1 }>
                         <ListItemText primary={ renderText(option) } />

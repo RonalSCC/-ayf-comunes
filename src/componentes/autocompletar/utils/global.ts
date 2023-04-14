@@ -1,4 +1,4 @@
-import packageJson from '../../package.json';
+// import packageJson from '../../../../package.json';
 
 const tryGetVersionErp = () => {
   const regex = /v(\d)?/gi;
@@ -61,15 +61,21 @@ const resolveVersionErp = () => {
   return tryGetVersionErp();
 }
 
+const siteUrl = resolveURL();
+const version_erp = resolveVersionErp();
+
+
 const AYF: AYF = {
-  APP_NAME: packageJson.name || 'configuracion',
-  APP_VERSION: packageJson.version,
+  // APP_NAME: packageJson.name || 'configuracion',
+  APP_NAME: 'prueba',
+  APP_VERSION: "0.1.0",
+  // APP_VERSION: packageJson.version,
   BUILD_MODE_PRODUCTION: process.env.NODE_ENV === 'production',
-  SITE_URL: resolveURL(),
+  SITE_URL: siteUrl,
   TOKEN: resolveToken(),
-  VERSION_ERP: resolveVersionErp()
+  VERSION_ERP: version_erp,
+  BASE_URL: siteUrl + '/' + version_erp
 }
 
-window.__AYF__ = window.__AYF__ || AYF;
 
-export default window.__AYF__;
+export default AYF;
